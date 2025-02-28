@@ -31,6 +31,7 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
       - name: Detect package manager
         id: detect-package-manager
         run: |
@@ -48,11 +49,13 @@ jobs:
             echo "Unable to determine package manager"
             exit 1
           fi
+
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: "20"
           cache: ${{ steps.detect-package-manager.outputs.manager }}
+
       - name: Setup Pages
         uses: actions/configure-pages@v5
         with:
@@ -61,6 +64,7 @@ jobs:
           #
           # You may remove this line if you want to manage the configuration yourself.
           static_site_generator: next
+          
       - name: Restore cache
         uses: actions/cache@v4
         with:
@@ -71,16 +75,23 @@ jobs:
           # If source files changed but packages didn't, rebuild from a prior cache.
           restore-keys: |
             ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json', '**/yarn.lock') }}-
+
       - name: Install dependencies
         run: ${{ steps.detect-package-manager.outputs.manager }} ${{ steps.detect-package-manager.outputs.command }}
-      - name: Update staticFolder path in next.config.js
+
+      - name: Update next.config.js
         run: |
-          sed -i 's|staticFolder: "",*$|staticFolder: "/tdex",|g' next.config.js
-      - name: Update favicon path in _app.tsx
+          # Use awk to modify the staticFolder in next.config.js
+          awk '{gsub(/staticFolder: ""/, "staticFolder: \"/tdex\""); print}' next.config.js > next.config.js.tmp && mv next.config.js.tmp next.config.js
+    
+      - name: Update _app.tsx
         run: |
-          sed -i 's|href="/favicon.png"*$|href="/tdex/favicon.png"|g' pages/_app.tsx
+          # Use awk to modify the favicon path in _app.tsx
+          awk '{gsub(/href="\/favicon.png"/, "href=\"/tdex/favicon.png\""); print}' pages/_app.tsx > pages/_app.tsx.tmp && mv pages/_app.tsx.tmp pages/_app.tsx
+
       - name: Build
         run: ${{ steps.detect-package-manager.outputs.runner }} next build
+        
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
