@@ -2,10 +2,9 @@ import { Coin, TDEXv2Provider } from 'lib/types'
 import Modal, { ModalIds } from './modal'
 import Image from 'next/image'
 import { closeModal } from 'lib/utils'
-import { supportedAssets } from 'lib/assets'
-import { WalletContext } from 'providers/wallet'
-import { useContext } from 'react'
-import { TradeContext } from 'providers/trade'
+import getConfig from 'next/config';
+
+const { publicRuntimeConfig } = getConfig();
 
 interface ProviderListModalProps {
   providers: TDEXv2Provider[]
@@ -36,7 +35,7 @@ const ProviderListModal = ({
   // reusable icon
   const Icon = ({ status }: { status: string }) => (
     <Image
-      src={`/images/icons/${status}.svg`}
+      src={`${publicRuntimeConfig.staticFolder}/images/icons/${status}.svg`}
       className="pr-2"
       alt={`${status} icon`}
       height={32}
