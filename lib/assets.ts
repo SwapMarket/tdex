@@ -1,6 +1,9 @@
 import { Coin } from './types'
 import { NetworkNames } from './constants'
 import { defaultNetwork } from './defaults'
+import getConfig from 'next/config';
+
+const { publicRuntimeConfig } = getConfig();
 
 // Note: Coin is an Asset with imgSrc and not mandatory amount
 interface IAssetHash {
@@ -50,31 +53,31 @@ const AssetHashes: Record<string, IAssetHash> = {
 // common characteristics for a coin across different networks
 const ProtoAssets: Omit<Coin, 'assetHash'>[] = [
   {
-    iconSrc: '/images/assets/fusd.svg',
+    iconSrc: `${publicRuntimeConfig.staticFolder}/images/assets/fusd.svg`,
     name: 'Fuji USD',
     precision: 8,
     ticker: AssetTickers.FUSD,
   },
   {
-    iconSrc: '/images/assets/lbtc.svg',
+    iconSrc: `${publicRuntimeConfig.staticFolder}/images/assets/lbtc.svg`,
     name: 'Liquid Bitcoin',
     precision: 8,
     ticker: AssetTickers.LBTC,
   },
   {
-    iconSrc: '/images/assets/lcad.png',
+    iconSrc: `${publicRuntimeConfig.staticFolder}/images/assets/lcad.png`,
     name: 'Liquid CAD',
     precision: 8,
     ticker: AssetTickers.LCAD,
   },
   {
-    iconSrc: '/images/assets/leaf.png',
+    iconSrc: `${publicRuntimeConfig.staticFolder}/images/assets/leaf.png`,
     name: 'Leaf Token',
     precision: 8,
     ticker: AssetTickers.LEAF,
   },
   {
-    iconSrc: '/images/assets/usdt.svg',
+    iconSrc: `${publicRuntimeConfig.staticFolder}/images/assets/usdt.svg`,
     name: 'Liquid USDT',
     precision: 8,
     ticker: AssetTickers.USDT,

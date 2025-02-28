@@ -1,7 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  basePath: '/tdex',
-  assetPrefix: '/tdex/',
+  publicRuntimeConfig: {
+    staticFolder: '/tdex', // public folder base
+  },
   reactStrictMode: true,
   webpack: (config) => {
     config.resolve.fallback = {
