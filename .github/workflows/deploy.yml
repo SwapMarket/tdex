@@ -74,7 +74,7 @@ jobs:
       - name: Install dependencies
         run: ${{ steps.detect-package-manager.outputs.manager }} ${{ steps.detect-package-manager.outputs.command }}
       - name: Install SWC
-        run: yarn add @next/swc-linux-x64-gnu --dev
+        run: sudo sudo apt-get update && apt-get install -y libssl3 libc6-dev
       - name: Build with Next.js
         run: ${{ steps.detect-package-manager.outputs.runner }} next build
       - name: Upload artifact
