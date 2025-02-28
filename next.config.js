@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   publicRuntimeConfig: {
-    staticFolder: '/tdex', // public folder base
+    staticFolder: "", // public folder base
   },
   reactStrictMode: true,
   webpack: (config) => {
