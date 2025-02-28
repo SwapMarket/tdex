@@ -1,6 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   basePath: '/tdex',
+  assetPrefix: '/tdex/',
   reactStrictMode: true,
   webpack: (config) => {
     config.resolve.fallback = {
