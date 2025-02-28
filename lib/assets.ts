@@ -43,7 +43,7 @@ const AssetHashes: Record<string, IAssetHash> = {
     [NetworkNames.MAINNET]:
       'ce091c998b83c78bb71a632313ba3760f1763d9cfcffae02258ffa9865a37bd2',
     [NetworkNames.TESTNET]:
-      'f3d1ec678811398cd2ae277cbe3849c6f6dbd72c74bc542f7c4b11ff0e820958',
+      'b612eb46313a2cd6ebabd8b7a8eed5696e29898b87a43bff41c94f51acef9d73',
   },
 }
 
@@ -75,7 +75,7 @@ const ProtoAssets: Omit<Coin, 'assetHash'>[] = [
   },
   {
     iconSrc: '/images/assets/usdt.svg',
-    name: 'Liquid Tether',
+    name: 'Liquid USDT',
     precision: 8,
     ticker: AssetTickers.USDT,
   },

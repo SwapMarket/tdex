@@ -14,12 +14,12 @@ const defaultDestAsset = (network: NetworkNames) =>
   findAssetByTicker(AssetTickers.LBTC, network)
 
 /**
- * Default from asset (FUSD)
+ * Default from asset (USDT)
  * @param network NetworkNames
  * @returns Asset
  */
 const defaultFromAsset = (network: NetworkNames) =>
-  findAssetByTicker(AssetTickers.FUSD, network)
+  findAssetByTicker(AssetTickers.USDT, network)
 
 /**
  * Get default pair
