@@ -5,6 +5,9 @@ import { TradeStatus } from 'lib/constants'
 import ExplorerLink from 'components/explorerLink'
 import { fromSatoshis } from 'lib/utils'
 import { ReactNode } from 'react'
+import getConfig from 'next/config';
+
+const { publicRuntimeConfig } = getConfig();
 
 interface TradeModalProps {
   close: () => void
@@ -29,7 +32,7 @@ const TradeModal = ({ close, error, pair, status, txid }: TradeModalProps) => {
   // reusable icon
   const Icon = ({ status }: { status: string }) => (
     <Image
-      src={`/images/icons/${status}.svg`}
+      src={`${publicRuntimeConfig.staticFolder}/images/icons/${status}.svg`}
       alt={`${status} icon`}
       height={128}
       width={128}

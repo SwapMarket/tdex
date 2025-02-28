@@ -37,39 +37,54 @@ export const TradeProvider = ({ children }: TradeProviderProps) => {
 
   // fetch and set markets (needs to fetch providers)
   useEffect(() => {
-    if (!network) return
+    if (!network) return;
+  
     const asyncFetchAndSetMarketsAndProviders = async () => {
       try {
-        setLoading(true)
-        const markets: TDEXv2Market[] = []
-        const providers = await getProvidersFromRegistry(network)
-        if (providers.length === 0) throw TradeStatusMessage.NoProviders
-        for (const provider of providers) {
+        setLoading(true);
+  
+        const providers = await getProvidersFromRegistry(network);
+        if (providers.length === 0) throw TradeStatusMessage.NoProviders;
+  
+        // Fetch markets from all providers in parallel
+        const marketFetchPromises = providers.map(async (provider) => {
           try {
-            for (let market of await fetchMarketsFromProvider(provider)) {
-              try {
-                markets.push({
-                  ...market,
-                  price: await getMarketPrice(market),
-                })
-              } catch (ignore) {}
+            return await fetchMarketsFromProvider(provider);
+          } catch (ignore) {
+            return []; // Ignore failed providers
+          }
+        });
+  
+        const marketsFromProviders = await Promise.all(marketFetchPromises);
+        const allMarkets = marketsFromProviders.flat();
+  
+        if (allMarkets.length === 0) throw TradeStatusMessage.NoMarkets;
+  
+        // Fetch market prices in parallel
+        const marketsWithPrices = await Promise.all(
+          allMarkets.map(async (market) => {
+            try {
+              return { ...market, price: await getMarketPrice(market) };
+            } catch (ignore) {
+              return market; // Ignore price fetching errors
             }
-          } catch (ignore) {}
-        }
-        if (markets.length === 0) throw TradeStatusMessage.NoMarkets
-        setMarkets(markets)
-        setProviders(providers)
+          })
+        );
+  
+        setMarkets(marketsWithPrices);
+        setProviders(providers);
       } catch (err) {
-        console.error(err)
-        showToast(err)
-        setMarkets([])
-        setProviders([])
+        console.error(err);
+        showToast(err);
+        setMarkets([]);
+        setProviders([]);
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
-    }
-    asyncFetchAndSetMarketsAndProviders()
-  }, [network])
+    };
+  
+    asyncFetchAndSetMarketsAndProviders();
+  }, [network]);
 
   return (
     <TradeContext.Provider value={{ loading, markets, providers }}>
