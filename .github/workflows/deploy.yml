@@ -75,7 +75,7 @@ jobs:
         run: ${{ steps.detect-package-manager.outputs.manager }} ${{ steps.detect-package-manager.outputs.command }}
       - name: Move static folder location to /tdex/
         run: |
-          sed -i 's|staticFolder: "",*$|staticFolder: "/tdex",|g' next.config.mjs && \
+          sed -i 's|staticFolder: "",*$|staticFolder: "/tdex",|g' next.config.js && \
           sed -i 's|href="/favicon.png"*$|href="/tdex/favicon.png"|g' pages/_app.tsx
       - name: Build
         run: ${{ steps.detect-package-manager.outputs.runner }} next build
