@@ -73,9 +73,11 @@ jobs:
             ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json', '**/yarn.lock') }}-
       - name: Install dependencies
         run: ${{ steps.detect-package-manager.outputs.manager }} ${{ steps.detect-package-manager.outputs.command }}
-      - name: Move static folder location to /tdex/
+      - name: Update staticFolder path in next.config.js
         run: |
-          sed -i 's|staticFolder: "",*$|staticFolder: "/tdex",|g' next.config.js && \
+          sed -i 's|staticFolder: "",*$|staticFolder: "/tdex",|g' next.config.js
+      - name: Update favicon path in _app.tsx
+        run: |
           sed -i 's|href="/favicon.png"*$|href="/tdex/favicon.png"|g' pages/_app.tsx
       - name: Build
         run: ${{ steps.detect-package-manager.outputs.runner }} next build
