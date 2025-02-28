@@ -26,7 +26,7 @@
     "file-saver": "^2.0.5",
     "liquidjs-lib": "^6.0.2-liquid.23",
     "marina-provider": "^2.0.0",
-    "next": "^12.2.2",
+    "next": "^15.2.0",
     "next-qrcode": "^2.2.0",
     "react": "18.0.0",
     "react-dom": "18.0.0",
