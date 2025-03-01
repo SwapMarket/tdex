@@ -114,6 +114,12 @@ export default function Trade() {
                 from: { ...pair.from, amount },
               },
         )
+
+        if (market?.price && preview.price) {
+          // update last price
+          market.price.spotPrice = preview.price.quotePrice;
+          setMarket(market);
+        }
       }
     } catch (err) {
       setErrorPreview(true)
@@ -183,7 +189,7 @@ export default function Trade() {
   }
 
   const provider = market?.provider ?? useProvider
-
+  
   // manage button status and message
   const TradeButtonMessage = !connected
     ? TradeStatusMessage.ConnectWallet
@@ -232,14 +238,47 @@ export default function Trade() {
               <div className="is-flex is-justify-content-space-between">
                 <p className="is-size-7 is-ellipsis">
                   Provider:{' '}
-                  <a href={provider?.endpoint}>{provider?.endpoint}</a>
+                  <a href={provider?.endpoint}>{provider?.name}</a>
                 </p>
                 <p
-                  className="is-size-7 is-clickable is-action"
+                  className="is-size-7 is-clickable is-action has-text-white"
                   onClick={() => openModal(ModalIds.ProviderList)}
                 >
                   Change
                 </p>
+              </div>
+            )}
+            {connected && market && (
+              <div className="is-flex is-justify-content-space-between">
+                <p className="is-size-7 is-ellipsis">
+                  Mid-Market Price:{' '}
+                  {market?.price?.spotPrice.toLocaleString()}
+                </p>
+                <p className="is-size-7 is-ellipsis">
+                  Fees:{' '}
+                  {Number(market?.percentageFee?.baseAsset)/100}
+                  {'% / '}
+                  {Number(market?.percentageFee?.quoteAsset)/100}
+                  {'% + '}
+                  {Number(market?.fixedFee?.baseAsset).toLocaleString()}
+                  {' / '}
+                  {Number(market?.fixedFee?.quoteAsset).toLocaleString()}
+                </p>       
+              </div>
+            )}
+            {connected && market && (
+              <div className="is-flex is-justify-content-space-between">
+                <p className="is-size-7 is-ellipsis">
+                  Min Trade Size:{' '}
+                  {Number(market?.price?.minTradableAmount).toLocaleString()}
+                  {' sats'}
+                </p>
+                <p className="is-size-7 is-ellipsis">
+                  Balances:{' '}
+                  {Number(market?.price?.balance?.baseAmount).toLocaleString()}
+                  {' / '}
+                  {Number(market?.price?.balance?.quoteAmount).toLocaleString()}
+                </p>              
               </div>
             )}
           </div>

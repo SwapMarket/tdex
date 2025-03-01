@@ -13,12 +13,11 @@ export interface CoinPair {
 export interface TDEXv2Market {
   provider: TDEXv2Provider
   baseAsset: string
-  baseAmount?: string
   quoteAsset: string
-  quoteAmount?: string
   percentageFee?: { baseAsset: string; quoteAsset: string }
   fixedFee?: { baseAsset: string; quoteAsset: string }
   price?: TDEXv2MarketPrice
+  balance?: { baseAmount: string; quoteAmount: string }
 }
 
 /**
@@ -55,6 +54,7 @@ export function isTDEXv2Provider(provider: any): provider is TDEXv2Provider {
 export interface TDEXv2MarketPrice {
   spotPrice: number
   minTradableAmount: string
+  balance: { baseAmount: string; quoteAmount: string }
 }
 
 /**
