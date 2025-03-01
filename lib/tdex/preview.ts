@@ -9,6 +9,7 @@ import {
 } from 'lib/types'
 import { getTradeType } from './market'
 import { TradeStatusMessage } from 'lib/constants'
+import { showToast } from 'lib/toast'
 
 /**
  * Returns an array of trade previews
@@ -23,7 +24,7 @@ const fetchTradePreviews = async (
   coin: Coin,
   market: TDEXv2Market,
   pair: CoinPair,
-): Promise<TDEXv2PreviewTradeResponse[]> => {
+): Promise<TDEXv2PreviewTradeResponse[] | null> => {
   console.debug('fetchTradePreview', amount, coin, market, pair)
   const { dest, from } = pair
   const otherCoin = coin.assetHash === from.assetHash ? dest : from
@@ -35,11 +36,19 @@ const fetchTradePreviews = async (
     market,
     type,
   }
-  const url = market.provider.endpoint + '/v2/trade/preview'
-  const opt = { headers: { 'Content-Type': 'application/json' } }
-  const res = (await axios.post(url, trade, opt)).data.previews
-  if (!Array.isArray(res)) throw new Error('Invalid trade/preview response')
-  return res.filter(isTDEXv2PreviewTradeResponse)
+  try {
+    const url = market.provider.endpoint + '/v2/trade/preview'
+    const opt = { headers: { 'Content-Type': 'application/json' } }
+    const res = (await axios.post(url, trade, opt))
+    const previews = res.data.previews
+    if (!Array.isArray(previews)) throw new Error('Invalid trade/preview response')
+    return previews.filter(isTDEXv2PreviewTradeResponse)
+  } catch (err: any) {
+    if (err.response?.data?.code) {
+      showToast(err.response?.data?.message)
+    }
+    return null
+  }
 }
 
 /**

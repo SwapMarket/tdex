@@ -123,7 +123,6 @@ export default function Trade() {
       }
     } catch (err) {
       setErrorPreview(true)
-      showToast(err)
     }
   }
 
