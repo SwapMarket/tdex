@@ -1,10 +1,10 @@
-# 🔁 dex.vulpem.com
+# 🔁 swapmarket.github.io/tdex
 
 Trade Liquid assets via [TDEX](https://tdex.network) in the browser with Marina extension
 
 ## 📄 Usage
 
-Visit the [dex.vulpem.com](https://dex.vulpem.com)
+Visit the [swapmarket.github.io/tdex](https://swapmarket.github.io/tdex/)
 
 ## 🖥 Local Development
 
