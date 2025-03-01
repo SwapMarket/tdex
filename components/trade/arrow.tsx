@@ -1,6 +1,6 @@
 import Image from 'next/image'
-import getConfig from 'next/config';
-const { publicRuntimeConfig } = getConfig();
+import getConfig from 'next/config'
+const { publicRuntimeConfig } = getConfig()
 
 export default function Arrow({ onClick }: { onClick: () => void }) {
   return (

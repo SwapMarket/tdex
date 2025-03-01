@@ -181,14 +181,19 @@ export const proposeTrade = async (
   }
 
   const timeout = (ms: number) =>
-    new Promise((_, reject) => setTimeout(() => reject(new Error('Request timed out')), ms));
+    new Promise((_, reject) =>
+      setTimeout(() => reject(new Error('Request timed out')), ms),
+    )
 
   // request trade proposal and return response
   const tradeProposeResponse: TDEXv2ProposeTradeResponse = await Promise.race([
-    axiosPost(market.provider.endpoint + '/v2/trade/propose', tradeProposeRequest),
+    axiosPost(
+      market.provider.endpoint + '/v2/trade/propose',
+      tradeProposeRequest,
+    ),
     timeout(5000), // 5 seconds timeout
-  ]);
-  
+  ])
+
   if (!isTDEXv2ProposeTradeResponse(tradeProposeResponse))
     throw new Error('Invalid trade propose response')
 

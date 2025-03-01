@@ -39,9 +39,10 @@ const fetchTradePreviews = async (
   try {
     const url = market.provider.endpoint + '/v2/trade/preview'
     const opt = { headers: { 'Content-Type': 'application/json' } }
-    const res = (await axios.post(url, trade, opt))
+    const res = await axios.post(url, trade, opt)
     const previews = res.data.previews
-    if (!Array.isArray(previews)) throw new Error('Invalid trade/preview response')
+    if (!Array.isArray(previews))
+      throw new Error('Invalid trade/preview response')
     return previews.filter(isTDEXv2PreviewTradeResponse)
   } catch (err: any) {
     if (err.response?.data?.code) {

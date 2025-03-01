@@ -117,8 +117,8 @@ export default function Trade() {
 
         if (market?.price && preview.price) {
           // update last price
-          market.price.spotPrice = preview.price.quotePrice;
-          setMarket(market);
+          market.price.spotPrice = preview.price.quotePrice
+          setMarket(market)
         }
       }
     } catch (err) {
@@ -188,7 +188,7 @@ export default function Trade() {
   }
 
   const provider = market?.provider ?? useProvider
-  
+
   // manage button status and message
   const TradeButtonMessage = !connected
     ? TradeStatusMessage.ConnectWallet
@@ -236,8 +236,7 @@ export default function Trade() {
             {connected && providers.length > 0 && (
               <div className="is-flex is-justify-content-space-between">
                 <p className="is-size-7 is-ellipsis">
-                  Provider:{' '}
-                  <a href={provider?.endpoint}>{provider?.name}</a>
+                  Provider: <a href={provider?.endpoint}>{provider?.name}</a>
                 </p>
                 <p
                   className="is-size-7 is-clickable is-action has-text-white"
@@ -251,33 +250,34 @@ export default function Trade() {
               <div className="is-flex is-justify-content-space-between">
                 <p className="is-size-7 is-ellipsis">
                   Mid-Market Price:{' '}
-                  {market?.price?.spotPrice.toLocaleString()}
+                  <span className="has-text-white">
+                    {market?.price?.spotPrice.toLocaleString()}
+                  </span>
                 </p>
                 <p className="is-size-7 is-ellipsis">
-                  Fees:{' '}
-                  {Number(market?.percentageFee?.baseAsset)/100}
+                  Fees: {Number(market?.percentageFee?.baseAsset) / 100}
                   {'% / '}
-                  {Number(market?.percentageFee?.quoteAsset)/100}
+                  {Number(market?.percentageFee?.quoteAsset) / 100}
                   {'% + '}
-                  {Number(market?.fixedFee?.baseAsset).toLocaleString()}
+                  {Number(market?.fixedFee?.baseAsset) / 1e8}
                   {' / '}
-                  {Number(market?.fixedFee?.quoteAsset).toLocaleString()}
-                </p>       
+                  {(
+                    Number(market?.fixedFee?.quoteAsset) / 1e8
+                  ).toLocaleString()}
+                </p>
               </div>
             )}
             {connected && market && (
               <div className="is-flex is-justify-content-space-between">
                 <p className="is-size-7 is-ellipsis">
                   Min Trade Size:{' '}
-                  {Number(market?.price?.minTradableAmount).toLocaleString()}
-                  {' sats'}
+                  {Number(market?.price?.minTradableAmount) / 1e8}
                 </p>
                 <p className="is-size-7 is-ellipsis">
-                  Balances:{' '}
-                  {Number(market?.price?.balance?.baseAmount).toLocaleString()}
+                  Balances: {Number(market?.price?.balance?.baseAmount) / 1e8}
                   {' / '}
-                  {Number(market?.price?.balance?.quoteAmount).toLocaleString()}
-                </p>              
+                  {Number(market?.price?.balance?.quoteAmount) / 1e8}
+                </p>
               </div>
             )}
           </div>

@@ -1,9 +1,9 @@
 import { Coin } from './types'
 import { NetworkNames } from './constants'
 import { defaultNetwork } from './defaults'
-import getConfig from 'next/config';
+import getConfig from 'next/config'
 
-const { publicRuntimeConfig } = getConfig();
+const { publicRuntimeConfig } = getConfig()
 
 // Note: Coin is an Asset with imgSrc and not mandatory amount
 interface IAssetHash {

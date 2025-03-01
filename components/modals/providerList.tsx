@@ -2,9 +2,9 @@ import { Coin, TDEXv2Provider } from 'lib/types'
 import Modal, { ModalIds } from './modal'
 import Image from 'next/image'
 import { closeModal } from 'lib/utils'
-import getConfig from 'next/config';
+import getConfig from 'next/config'
 
-const { publicRuntimeConfig } = getConfig();
+const { publicRuntimeConfig } = getConfig()
 
 interface ProviderListModalProps {
   providers: TDEXv2Provider[]
