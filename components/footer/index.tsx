@@ -15,7 +15,7 @@ export default function Footer() {
           rel="noreferrer"
         >
           <Image
-            src={`/images/icons/tdex_logo.svg`} // Removed publicRuntimeConfig
+            src={`${publicRuntimeConfig.staticFolder}/images/icons/tdex_logo.svg`}
             alt="tdex logo"
             height={64}
             width={64}

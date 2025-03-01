@@ -92,8 +92,14 @@ jobs:
           # Use awk to modify content="/images" to content="/tdex/images" in _app.tsx
           awk '{gsub(/content="\/images/, "content=\"/tdex/images/"); print}' pages/_app.tsx > pages/_app.tsx.tmp && mv pages/_app.tsx.tmp pages/_app.tsx
 
+      - name: Get Commit Hash
+        id: commit
+        run: echo "commit_hash=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+
       - name: Build
         run: ${{ steps.detect-package-manager.outputs.runner }} next build
+        env:
+          NEXT_PUBLIC_GIT_COMMIT: ${{ env.commit_hash }}
         
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
