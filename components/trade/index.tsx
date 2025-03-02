@@ -280,6 +280,9 @@ export default function Trade() {
                 </p>
               </div>
             )}
+            <p className="is-size-7 is-ellipsis">
+              Warning: received amount shown is indicative and is NOT net of fees
+            </p>
           </div>
         </div>
         <AssetListModal
