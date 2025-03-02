@@ -282,7 +282,7 @@ export default function Trade() {
             )}
             {connected && market && (
               <p className="is-size-7">
-                Warning: received amount shown is indicative and is NOT net of fees
+                Warning: amount to be received is indicative and shown before deducting fees
               </p>
             )}
           </div>
