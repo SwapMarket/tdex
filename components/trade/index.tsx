@@ -281,7 +281,7 @@ export default function Trade() {
               </div>
             )}
             {connected && market && (
-              <p className="is-size-7 is-ellipsis">
+              <p className="is-size-7">
                 Warning: received amount shown is indicative and is NOT net of fees
               </p>
             )}
