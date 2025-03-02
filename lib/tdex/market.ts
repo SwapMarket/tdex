@@ -56,34 +56,26 @@ export async function getMarketPrice(
  * @param pair
  * @returns number
  */
-function totalMarketFees(
-  market: TDEXv2Market,
-  pair: CoinPair,
-): number | undefined {
-  console.debug('totalMarketFees', market, pair)
-  // return undefined if market has no price
-  if (typeof market.fixedFee === 'undefined') return
-  if (typeof market.percentageFee === 'undefined') return
+function totalMarketFees(market: TDEXv2Market, pair: CoinPair): number | undefined {
+  console.debug('totalMarketFees', market, pair);
 
-  // calculate fees
-  const fixedFees = Decimal.add(
-    market.fixedFee.baseAsset,
-    market.fixedFee.quoteAsset,
-  )
-  const percentageFees = {
-    dest: Decimal.mul(
-      pair.dest.amount ?? 0,
-      market.percentageFee.quoteAsset,
-    ).div(10_000),
-    from: Decimal.mul(
-      pair.from.amount ?? 0,
-      market.percentageFee.baseAsset,
-    ).div(10_000),
+  if (typeof market.fixedFee === 'undefined' || typeof market.percentageFee === 'undefined') {
+    return;
   }
 
-  return Decimal.add(percentageFees.dest, percentageFees.from)
-    .add(fixedFees)
-    .toNumber()
+  const tradeType = getTradeType(market, pair);
+
+  if (tradeType === TDEXv2TradeType.BUY) {
+    // Buying base asset → Fees apply to quoteAsset
+    const fixedFee = market.fixedFee.quoteAsset;
+    const percentageFee = Decimal.mul(pair.from.amount ?? 0, market.percentageFee.quoteAsset).div(10_000);
+    return Decimal.add(fixedFee, percentageFee).toNumber();
+  } else {
+    // Selling base asset → Fees apply to baseAsset
+    const fixedFee = market.fixedFee.baseAsset;
+    const percentageFee = Decimal.mul(pair.from.amount ?? 0, market.percentageFee.baseAsset).div(10_000);
+    return Decimal.add(fixedFee, percentageFee).toNumber();
+  }
 }
 
 /**
@@ -98,6 +90,10 @@ export function getBestMarket(
   useProvider?: TDEXv2Provider,
 ): TDEXv2Market | undefined {
   console.debug('getBestMarket', markets, pair, useProvider)
+
+  if (markets.length == 0) return; // No valid markets
+  const tradeType = getTradeType(markets[0], pair);
+
   const validMarkets = markets
     // return markets filtered by provider if useProvider is defined
     .filter((market) =>
@@ -111,42 +107,47 @@ export function getBestMarket(
         (market.baseAsset === pair.dest.assetHash &&
           market.quoteAsset === pair.from.assetHash),
     )
+    // Ensure provider has enough balance
+    .filter((market) => {
+      const tradeAmount = pair.dest.amount ?? 0;
+      if (!market.price?.balance) return false;
+
+      if (tradeType === TDEXv2TradeType.BUY) {
+        return !(Number(market.price.balance.baseAmount) < tradeAmount);
+      } else {
+        return !(Number(market.price.balance.quoteAmount) < tradeAmount);
+      }
+    });
 
   if (!validMarkets) return
   if (validMarkets.length === 1) return validMarkets[0]
 
   // if we reach this point, it means we have several matching markets,
-  // so lets find the market with the best spot price
-  const bestMarket = validMarkets.reduce((prev, curr) => {
-    const prevSpotPrice = prev.price?.spotPrice ?? 0
-    const currSpotPrice = curr.price?.spotPrice ?? 0
-    return getTradeType(curr, pair) === TDEXv2TradeType.BUY
-      ? // when buying base asset we want the lowest spot price
-        prevSpotPrice < currSpotPrice
-        ? prev
-        : curr
-      : // when selling base asset we want the highest spot price
-      prevSpotPrice > currSpotPrice
-      ? prev
-      : curr
+  // so lets find the market with the highest proceeds from the trade
+  return validMarkets.reduce((bestMarket, currentMarket) => {
+    const spotPrice = currentMarket.price?.spotPrice ?? 0
+    const marketFees = totalMarketFees(currentMarket, pair) ?? 0
+
+    let netProceeds: number
+
+    if (tradeType === TDEXv2TradeType.BUY) {
+      // Buying base asset: How much base asset do we get after fees?
+      netProceeds = (pair.from.amount ?? 0) / spotPrice - marketFees
+    } else {
+      // Selling base asset: How much quote asset do we get after fees?
+      netProceeds = (pair.from.amount ?? 0) * spotPrice - marketFees
+    }
+
+    const bestNetProceeds = (() => {
+      const bestSpotPrice = bestMarket.price?.spotPrice ?? 0
+      const bestMarketFees = totalMarketFees(bestMarket, pair) ?? 0
+      return tradeType === TDEXv2TradeType.BUY
+        ? (pair.from.amount ?? 0) / bestSpotPrice - bestMarketFees
+        : (pair.from.amount ?? 0) * bestSpotPrice - bestMarketFees
+    })()
+
+    return netProceeds > bestNetProceeds ? currentMarket : bestMarket
   }, validMarkets[0])
-
-  // check if there are more then one market with same spot price
-  // in that case, return the market with lowest fee
-  const dups = validMarkets.filter(
-    (m) => m.price?.spotPrice === bestMarket.price?.spotPrice,
-  )
-  if (dups.length > 1) {
-    return dups.reduce((prev, curr) => {
-      const prevFees = totalMarketFees(prev, pair)
-      const currFees = totalMarketFees(curr, pair)
-      if (!prevFees) return curr
-      if (!currFees) return prev
-      return prevFees < currFees ? prev : curr
-    }, dups[0])
-  }
-
-  return bestMarket
 }
 
 /**
